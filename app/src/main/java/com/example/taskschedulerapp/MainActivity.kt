@@ -1,7 +1,7 @@
 package com.example.taskschedulerapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.taskschedulerapp.databinding.ActivityMainBinding
@@ -18,9 +18,16 @@ class MainActivity : AppCompatActivity() {
         //Setting view and obtain an instance of the binding class
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        //Getting the viewmodel
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        //Getting the view model
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         binding.mainViewModel = viewModel
+
+        binding.themeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked)
+                viewModel.setDarkTheme()
+            else
+                viewModel.setLightTheme()
+        }
     }
 }

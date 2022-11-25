@@ -1,6 +1,7 @@
 package com.example.taskschedulerapp
 
 import android.icu.util.Calendar
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import java.text.SimpleDateFormat
 
@@ -24,4 +25,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun setDarkTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
+
+    fun setLightTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
 }
