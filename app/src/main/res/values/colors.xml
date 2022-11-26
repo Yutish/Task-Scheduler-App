@@ -3,13 +3,15 @@
     <color name="primaryColor">#fafafa</color>
     <color name="primaryLightColor">#ffffff</color>
     <color name="primaryDarkColor">#c7c7c7</color>
+
     <color name="primaryColorDarkMode">#212121</color>
     <color name="primaryLightColorDarkMode">#484848</color>
     <color name="primaryDarkColorDarkMode">#000000</color>
-    <color name="secondaryColor">#bdbdbd</color>
-    <color name="secondaryLightColor">#efefef</color>
-    <color name="secondaryDarkColor">#8d8d8d</color>
+
+    <color name="secondaryColor">#9e9e9e</color>
+    <color name="secondaryLightColor">#cfcfcf</color>
+    <color name="secondaryDarkColor">#707070</color>
+
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
-    <color name="white">#fff</color>
 </resources>

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Task Scheduler App</string>
     <string name="add_new_task">Add new task</string>
+    <string name="done_button_text">DONE</string>
+    <string name="description_field_text">Description</string>
+    <string name="title_field_text">Title</string>
+    <string name="start_time_button_text">Start time</string>
+    <string name="end_time_button_text">End time</string>
 </resources>
