@@ -1,7 +1,6 @@
 package com.example.taskschedulerapp.clock
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +9,7 @@ import com.example.taskschedulerapp.SingletonCalender
 import com.example.taskschedulerapp.database.Task
 import com.example.taskschedulerapp.database.TaskDatabase
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
@@ -22,9 +22,9 @@ class ClockFragmentViewModel(database: TaskDatabase) : ViewModel() {
     private val calendar = SingletonCalender.calendarInstace
     private val taskDao = database.taskDAO
 
-    private lateinit var _singleTask : LiveData<Task>
+    private lateinit var _singleTask: LiveData<Task>
     val singleTask: LiveData<Task>
-    get() = _singleTask
+        get() = _singleTask
 
     @SuppressLint("SimpleDateFormat")
     private val _currentDate = SimpleDateFormat(DATE_PATTERN).format(calendar.time)
@@ -48,11 +48,16 @@ class ClockFragmentViewModel(database: TaskDatabase) : ViewModel() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun fetchSingleData(){
+    fun fetchSingleData() {
         viewModelScope.launch {
             _singleTask = taskDao.getSingleTask()
-            Log.i("YUtishs", _singleTask.toString())
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun deleteTask(id: Long) {
+        GlobalScope.launch {
+            taskDao.deleteTask(id)
         }
     }
 

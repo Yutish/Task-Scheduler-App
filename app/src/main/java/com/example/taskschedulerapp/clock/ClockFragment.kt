@@ -3,6 +3,7 @@ package com.example.taskschedulerapp.clock
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +29,7 @@ class ClockFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         //obtain an instance of the binding class
@@ -41,8 +41,7 @@ class ClockFragment : Fragment() {
 
         //Getting the view model
         clockFragmentViewModel = ViewModelProvider(
-            this,
-            clockFragmentViewModelFactory
+            this, clockFragmentViewModelFactory
         )[ClockFragmentViewModel::class.java]
 
         clockBinding.clockFragmentViewModel = clockFragmentViewModel
@@ -51,10 +50,8 @@ class ClockFragment : Fragment() {
 
 
         clockBinding.themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked)
-                clockFragmentViewModel.setDarkTheme()
-            else
-                clockFragmentViewModel.setLightTheme()
+            if (isChecked) clockFragmentViewModel.setDarkTheme()
+            else clockFragmentViewModel.setLightTheme()
         }
 
         clockBinding.floatingActionButton.setOnClickListener {
@@ -63,17 +60,68 @@ class ClockFragment : Fragment() {
 
         clockFragmentViewModel.singleTask.observe(viewLifecycleOwner) {
             val simpleDateFormat = SimpleDateFormat("hh:mm a")
-            if (it != null ) {
-                val startTimeInDate = simpleDateFormat.format(it.startTime)
-                val endTimeInDate = simpleDateFormat.format(it.endTime)
-                clockBinding.bottomSheetTitle.text =
-                    "$startTimeInDate to $endTimeInDate - ${it.title}"
-                clockBinding.bottomSheetDesc.text = it.description
+            if (it != null) {
+
+                if (System.currentTimeMillis() > it.endTime) {
+                    clockFragmentViewModel.deleteTask(it.id)
+                } else {
+                    if (System.currentTimeMillis() < it.startTime) {
+                        beforeTask(it.id, it.startTime, it.endTime)
+                    }
+                    if (System.currentTimeMillis() in it.startTime..it.endTime) {
+                        onGoingTask(it.id, it.endTime)
+                    }
+
+                    val startTimeInDate = simpleDateFormat.format(it.startTime)
+                    val endTimeInDate = simpleDateFormat.format(it.endTime)
+                    clockBinding.bottomSheetTitle.text =
+                        "$startTimeInDate to $endTimeInDate - ${it.title}"
+                    clockBinding.bottomSheetDesc.text = it.description
+                }
+            } else {
+                clockBinding.centralTextView.text = "No Tasks"
+                clockBinding.countDownTextView.text = "Scheduled"
             }
-
         }
-
         return clockBinding.root
     }
+
+    @SuppressLint("SetTextI18n")
+    private fun beforeTask(id: Long, startTime: Long, endTime: Long) {
+        clockBinding.centralTextView.text = "Next task in"
+        val time = (startTime - System.currentTimeMillis())
+        object : CountDownTimer(time, 1000) {
+
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long) {
+                clockBinding.countDownTextView.text =
+                    "${millisUntilFinished / 60000}: ${millisUntilFinished / 1000}"
+            }
+
+            override fun onFinish() {
+                onGoingTask(id, endTime)
+            }
+        }.start()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun onGoingTask(id: Long, endTime: Long) {
+        clockBinding.centralTextView.text = "Remaining"
+        val time = (endTime - System.currentTimeMillis())
+        object : CountDownTimer(time, 1000) {
+
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long) {
+                clockBinding.countDownTextView.text = "${(millisUntilFinished / 1000) / 60} minutes"
+            }
+
+            override fun onFinish() {
+                clockFragmentViewModel.deleteTask(id)
+                clockFragmentViewModel.fetchSingleData()
+
+            }
+        }.start()
+    }
+
 
 }

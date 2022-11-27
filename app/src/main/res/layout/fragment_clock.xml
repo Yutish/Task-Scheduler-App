@@ -93,12 +93,14 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/centralTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     tools:text="Next task in" />
 
                 <TextView
+                    android:id="@+id/countDownTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
@@ -151,10 +153,12 @@
                     android:id="@+id/bottomSheetTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:maxLines="1"
-                    android:padding="16dp"
+                    android:padding="8dp"
+                    android:textAlignment="center"
                     android:textSize="18sp"
                     android:textStyle="normal"
                     android:typeface="serif"
@@ -164,10 +168,11 @@
                     android:id="@+id/bottomSheetDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:maxLines="12"
-                    android:padding="16dp"
+                    android:padding="8dp"
                     android:textSize="18sp"
                     android:textStyle="normal"
                     android:typeface="serif"
