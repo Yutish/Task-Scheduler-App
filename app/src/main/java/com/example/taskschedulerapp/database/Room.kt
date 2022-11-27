@@ -14,7 +14,10 @@ interface TaskDAO {
     fun deleteTask(id: Long)
 
     @Query("SELECT * FROM task")
-    fun getTask(): LiveData<List<Task>>
+    fun getAllTask(): LiveData<List<Task>>
+
+    @Query("SELECT * FROM task ORDER BY startTime ASC LIMIT 1")
+    fun getSingleTask() : LiveData<Task>
 }
 
 @Database(entities = [Task::class], version = 1)
