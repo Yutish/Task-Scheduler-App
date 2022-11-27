@@ -6,4 +6,6 @@
     <string name="title_field_text">Title</string>
     <string name="start_time_button_text">Start time</string>
     <string name="end_time_button_text">End time</string>
+    <string name="to_open_bottom_sheet">to open bottom sheet</string>
+    <string name="to_close_bottom_sheet">to close bottom sheet</string>
 </resources>

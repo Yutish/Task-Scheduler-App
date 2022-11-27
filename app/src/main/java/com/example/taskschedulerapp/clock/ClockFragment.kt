@@ -1,12 +1,15 @@
 package com.example.taskschedulerapp.clock
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +18,8 @@ import com.example.taskschedulerapp.R
 import com.example.taskschedulerapp.SchedulerApplication
 import com.example.taskschedulerapp.database.getDatabase
 import com.example.taskschedulerapp.databinding.FragmentClockBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.fragment_clock.*
 
 /**
  * [ClockFragment] holds the main screen.
@@ -25,6 +30,11 @@ class ClockFragment : Fragment() {
 
     private lateinit var clockBinding: FragmentClockBinding
 
+    private val sharedPreferences =
+        SchedulerApplication.instance.getSharedPreferences("SharedPref", Context.MODE_PRIVATE)
+    private val editor = sharedPreferences.edit()
+
+    @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
 
 
@@ -48,6 +58,11 @@ class ClockFragment : Fragment() {
 
         clockFragmentViewModel.fetchSingleData()
 
+
+        clockBinding.themeSwitch.isChecked = sharedPreferences.getBoolean(SWITCH_VALUE_STRING, true)
+
+        if (clockBinding.themeSwitch.isChecked) clockFragmentViewModel.setDarkTheme()
+        else clockFragmentViewModel.setLightTheme()
 
         clockBinding.themeSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) clockFragmentViewModel.setDarkTheme()
@@ -79,9 +94,37 @@ class ClockFragment : Fragment() {
                     clockBinding.bottomSheetDesc.text = it.description
                 }
             } else {
-                clockBinding.centralTextView.text = "No Tasks"
-                clockBinding.countDownTextView.text = "Scheduled"
+
+                //When there is no task scheduled
+                clockBinding.apply {
+                    centralTextView.text = "No Tasks"
+                    countDownTextView.text = "Scheduled"
+                    bottomSheetTitle.text = ""
+                    bottomSheetDesc.text = ""
+                }
+
             }
+        }
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(clockBinding.bottomSheet)
+
+        clockBinding.bottomSheetUp.setOnClickListener {
+
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            clockBinding.apply {
+                bottomSheetUp.visibility = View.GONE
+                bottomSheetDown.visibility = View.VISIBLE
+            }
+
+        }
+        clockBinding.bottomSheetDown.setOnClickListener {
+
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            clockBinding.apply {
+                bottomSheetUp.visibility = View.VISIBLE
+                bottomSheetDown.visibility = View.GONE
+            }
+
         }
         return clockBinding.root
     }
@@ -94,8 +137,11 @@ class ClockFragment : Fragment() {
 
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
-                clockBinding.countDownTextView.text =
-                    "${millisUntilFinished / 60000}: ${millisUntilFinished / 1000}"
+                if (millisUntilFinished < 60000) {
+                    clockBinding.countDownTextView.text = "${millisUntilFinished / 1000} seconds"
+                } else {
+                    clockBinding.countDownTextView.text = "${millisUntilFinished / 60000}+ minutes"
+                }
             }
 
             override fun onFinish() {
@@ -112,16 +158,33 @@ class ClockFragment : Fragment() {
 
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
-                clockBinding.countDownTextView.text = "${(millisUntilFinished / 1000) / 60} minutes"
+                if (millisUntilFinished < 60000) {
+                    clockBinding.countDownTextView.text = "${millisUntilFinished / 1000} seconds"
+                } else {
+                    clockBinding.countDownTextView.text = "${millisUntilFinished / 60000}+ minutes"
+                }
             }
 
             override fun onFinish() {
-                clockFragmentViewModel.deleteTask(id)
-                clockFragmentViewModel.fetchSingleData()
+                clockFragmentViewModel.apply {
+                    deleteTask(id)
+                    fetchSingleData()
+                }
+
 
             }
         }.start()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        editor.apply {
+            putBoolean(SWITCH_VALUE_STRING, clockBinding.themeSwitch.isChecked)
+        }.apply()
+    }
+
+    companion object {
+        const val SWITCH_VALUE_STRING = "switchValue"
+    }
 
 }
