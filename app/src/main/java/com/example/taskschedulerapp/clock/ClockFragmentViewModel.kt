@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.taskschedulerapp.SingletonCalender
 import com.example.taskschedulerapp.database.Task
 import com.example.taskschedulerapp.database.TaskDatabase
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 
 class ClockFragmentViewModel(database: TaskDatabase) : ViewModel() {
@@ -25,6 +23,10 @@ class ClockFragmentViewModel(database: TaskDatabase) : ViewModel() {
     private lateinit var _singleTask: LiveData<Task>
     val singleTask: LiveData<Task>
         get() = _singleTask
+
+    private lateinit var _allTask: LiveData<List<Task>>
+    val allTask: LiveData<List<Task>>
+        get() = _allTask
 
     @SuppressLint("SimpleDateFormat")
     private val _currentDate = SimpleDateFormat(DATE_PATTERN).format(calendar.time)
@@ -51,6 +53,12 @@ class ClockFragmentViewModel(database: TaskDatabase) : ViewModel() {
     fun fetchSingleData() {
         viewModelScope.launch {
             _singleTask = taskDao.getSingleTask()
+        }
+    }
+
+    fun fetchAllData() {
+        viewModelScope.launch {
+            _allTask = taskDao.getAllTask()
         }
     }
 

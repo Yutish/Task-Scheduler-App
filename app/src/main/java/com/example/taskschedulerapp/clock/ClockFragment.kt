@@ -3,17 +3,16 @@ package com.example.taskschedulerapp.clock
 import android.annotation.SuppressLint
 import android.content.Context
 import android.icu.text.SimpleDateFormat
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.taskschedulerapp.R
 import com.example.taskschedulerapp.SchedulerApplication
 import com.example.taskschedulerapp.database.getDatabase
@@ -34,7 +33,7 @@ class ClockFragment : Fragment() {
         SchedulerApplication.instance.getSharedPreferences("SharedPref", Context.MODE_PRIVATE)
     private val editor = sharedPreferences.edit()
 
-    @RequiresApi(Build.VERSION_CODES.R)
+
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
 
 
@@ -57,6 +56,10 @@ class ClockFragment : Fragment() {
         clockBinding.clockFragmentViewModel = clockFragmentViewModel
 
         clockFragmentViewModel.fetchSingleData()
+
+        clockFragmentViewModel.fetchAllData()
+
+
 
 
         clockBinding.themeSwitch.isChecked = sharedPreferences.getBoolean(SWITCH_VALUE_STRING, true)
@@ -105,6 +108,21 @@ class ClockFragment : Fragment() {
 
             }
         }
+
+
+        val linearLayoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+
+
+        clockFragmentViewModel.allTask.observe(viewLifecycleOwner) {
+
+            clockBinding.recyclerView.apply {
+                layoutManager = linearLayoutManager
+                adapter = ClockRecyclerViewAdapter(it)
+            }
+        }
+
 
         val bottomSheetBehavior = BottomSheetBehavior.from(clockBinding.bottomSheet)
 

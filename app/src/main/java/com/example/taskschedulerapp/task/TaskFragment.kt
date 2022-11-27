@@ -103,13 +103,13 @@ class TaskFragment : Fragment() {
                     Toast.makeText(
                         context, "End time should be greater than start time", Toast.LENGTH_SHORT
                     ).show()
-                }
-                else if(System.currentTimeMillis() > startTimeInLong || System.currentTimeMillis() > endTimeInLong ){
+                } else if (System.currentTimeMillis() > startTimeInLong || System.currentTimeMillis() > endTimeInLong) {
                     Toast.makeText(
-                        context, "Start and end time should be greater than current time", Toast.LENGTH_SHORT
+                        context,
+                        "Start and end time should be greater than current time",
+                        Toast.LENGTH_SHORT
                     ).show()
-                }
-                else {
+                } else {
                     taskFragmentViewModel.addInDB(startTimeInLong, endTimeInLong, text, desc)
                     findNavController().navigate(R.id.action_taskFragment_to_clockFragment)
                 }

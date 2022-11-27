@@ -13,7 +13,7 @@ interface TaskDAO {
     @Query("DELETE FROM task WHERE id=:id")
     fun deleteTask(id: Long)
 
-    @Query("SELECT * FROM task")
+    @Query("SELECT * FROM task ORDER BY startTime ASC")
     fun getAllTask(): LiveData<List<Task>>
 
     @Query("SELECT * FROM task ORDER BY startTime ASC LIMIT 1")
@@ -36,9 +36,7 @@ fun getDatabase(context: Context): TaskDatabase {
     synchronized(TaskDatabase::class.java) {
         if (!::INSTANCE.isInitialized) {
             INSTANCE = Room.databaseBuilder(
-                context.applicationContext,
-                TaskDatabase::class.java,
-                "task_database"
+                context.applicationContext, TaskDatabase::class.java, "task_database"
             ).build()
         }
     }
