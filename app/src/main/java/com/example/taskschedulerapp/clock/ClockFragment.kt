@@ -21,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.fragment_clock.*
 
 /**
- * [ClockFragment] holds the main screen.
+ * [ClockFragment] holds the main screen, clock and list of tasks.
  */
 class ClockFragment : Fragment() {
 
@@ -35,8 +35,6 @@ class ClockFragment : Fragment() {
 
 
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -59,23 +57,24 @@ class ClockFragment : Fragment() {
 
         clockFragmentViewModel.fetchAllData()
 
-
-
-
+        //getting the stored switch state
         clockBinding.themeSwitch.isChecked = sharedPreferences.getBoolean(SWITCH_VALUE_STRING, true)
 
         if (clockBinding.themeSwitch.isChecked) clockFragmentViewModel.setDarkTheme()
         else clockFragmentViewModel.setLightTheme()
 
+        // changing theme on switch click
         clockBinding.themeSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) clockFragmentViewModel.setDarkTheme()
             else clockFragmentViewModel.setLightTheme()
         }
 
+        //adding new tasks
         clockBinding.floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.action_clockFragment_to_taskFragment)
         }
 
+        //getting and displaying single task in bottom sheet
         clockFragmentViewModel.singleTask.observe(viewLifecycleOwner) {
             val simpleDateFormat = SimpleDateFormat("hh:mm a")
             if (it != null) {
@@ -113,8 +112,7 @@ class ClockFragment : Fragment() {
         val linearLayoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-
-
+        // for showing the list of tasks
         clockFragmentViewModel.allTask.observe(viewLifecycleOwner) {
 
             clockBinding.recyclerView.apply {
@@ -125,6 +123,7 @@ class ClockFragment : Fragment() {
 
 
         val bottomSheetBehavior = BottomSheetBehavior.from(clockBinding.bottomSheet)
+
 
         clockBinding.bottomSheetUp.setOnClickListener {
 
@@ -147,6 +146,8 @@ class ClockFragment : Fragment() {
         return clockBinding.root
     }
 
+
+    // countdown timer to calculate the difference of time between current time and start time
     @SuppressLint("SetTextI18n")
     private fun beforeTask(id: Long, startTime: Long, endTime: Long) {
         clockBinding.centralTextView.text = "Next task in"
@@ -168,6 +169,7 @@ class ClockFragment : Fragment() {
         }.start()
     }
 
+    // countdown timer to calculate the difference of time between current time and end time
     @SuppressLint("SetTextI18n")
     private fun onGoingTask(id: Long, endTime: Long) {
         clockBinding.centralTextView.text = "Remaining"
@@ -194,6 +196,7 @@ class ClockFragment : Fragment() {
         }.start()
     }
 
+    //setting the switch state
     override fun onDestroyView() {
         super.onDestroyView()
         editor.apply {

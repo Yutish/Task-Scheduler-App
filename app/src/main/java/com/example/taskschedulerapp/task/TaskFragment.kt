@@ -84,6 +84,7 @@ class TaskFragment : Fragment() {
             timePickerDialog.show()
         }
 
+        // validating the inputs by user before storing it in db
         taskBinding.doneButton.setOnClickListener {
 
             val text = taskBinding.titleTextView.text.toString()
