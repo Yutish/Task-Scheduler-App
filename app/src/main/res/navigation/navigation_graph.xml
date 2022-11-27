@@ -23,6 +23,6 @@
             android:id="@+id/action_taskFragment_to_clockFragment"
             app:destination="@id/clockFragment"
             app:popUpTo="@+id/navigation_graph"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
